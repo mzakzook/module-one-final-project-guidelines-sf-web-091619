@@ -3,7 +3,6 @@ require 'rake'
 require 'active_record'
 require 'faker'
 Bundler.require
-ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: 'db/development.db')
 require 'bundler/setup'
 require 'sinatra/activerecord'
 
