@@ -15,5 +15,4 @@ def get_brewery_info_from_api
     i += 1
   end
   brewery_info.flatten
-  binding.pry
 end
