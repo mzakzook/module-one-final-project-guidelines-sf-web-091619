@@ -7,6 +7,7 @@ gem "pry"
 gem "require_all"
 gem 'activerecord', require: 'active_record'
 gem 'database_cleaner'
+gem 'rest-client'
 
 gem 'rake'
 
