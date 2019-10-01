@@ -1,16 +1,13 @@
 # frozen_string_literal: true
-source "https://rubygems.org"
-
-gem "sinatra-activerecord"
-gem "sqlite3", '~> 1.4'
-gem "pry"
-gem "require_all"
-gem 'activerecord', require: 'active_record'
+source 'https://rubygems.org'
+gem 'activerecord', '~> 5.2'
 gem 'database_cleaner'
-
+gem 'pry'
 gem 'rake'
-
+gem 'require_all'
 gem 'rubocop', '~> 0.65.0', require: false
-
+gem 'sinatra-activerecord', require: 'sinatra/activerecord'
+gem 'sqlite3', '~> 1.3.6'
 gem 'tty'
-
+gem 'faker'
+gem 'rest-client'
