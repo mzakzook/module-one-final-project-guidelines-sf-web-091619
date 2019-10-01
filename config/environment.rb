@@ -3,7 +3,6 @@ require 'rake'
 require 'active_record'
 require 'faker'
 Bundler.require
-
 require 'bundler/setup'
 require 'sinatra/activerecord'
 
@@ -13,13 +12,3 @@ ActiveRecord::Base.establish_connection(connection_details)
 
 require_all 'app'
 require_all 'lib'
-
-
-
-
-
-
-
-
-
-
