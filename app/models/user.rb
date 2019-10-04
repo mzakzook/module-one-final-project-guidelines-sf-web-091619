@@ -10,11 +10,14 @@ class User < ActiveRecord::Base
     def user_fav_drink
        if self.bookmarks.count > 0
             fav_drink = Bookmark.select('favorite, count(favorite) as cnt').where('user_id = ?', self.id).group('favorite').order('cnt DESC').first
-            puts "Your favorite drink is a(n) #{fav_drink.favorite}, with #{fav_drink.cnt} bookmark(s)!"
+            puts "Your favorite drink is a(n) #{fav_drink.favorite.split.map(&:capitalize).join(' ')}, with #{fav_drink.cnt} bookmark(s)!"
             fav_drink.favorite
        else
             puts "You do not have any bookmarks."
        end
     end
 
+    def phone_area_code
+        phone_number[0..3]
+    end
 end

@@ -10,13 +10,14 @@ class Brewery < ActiveRecord::Base
         if matched_brews.count > 0
             puts "Here's a list of Breweries in your area:\n\n"
             matched_brews.map do |mtchbrw|
-                puts "#{mtchbrw.name}, phone: #{mtchbrw.phone_number}"
+                puts "#{mtchbrw.name.split.map(&:capitalize).join(' ')}, phone: #{mtchbrw.phone_number}"
             end
         else
             puts "Your neck of the woods is pretty dry."
         end
     end
 
+  
     def self.brewery_by_city_and_type(city, type)
         # Brewery.all.select do |brew|
         #     brew.city == city && brew.brewery_type == type
