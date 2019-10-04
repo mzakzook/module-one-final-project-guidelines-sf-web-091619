@@ -226,16 +226,21 @@ def bookmark_chosen(user)
         
         if brewery.count > 0
             if brewery.count == 1
-                puts "Brewery found! Please tell us a little more to save your bookmark...
+                puts "Brewery found! #{capital_first(brewery[0].name)}... Please tell us a little more to save your bookmark...
                 \n Rate the Brewery (1-5)"
                 rating = gets.chomp
-                cgi
-                puts "What was your favorite drink?"
-                favorite = gets.chomp
-                cgi
-                Bookmark.create(brewery_id: brewery[0].id, user_id: user.id, rating: rating, favorite: favorite)
-                puts "Bookmark saved!"
-                pick_option(user)
+                if rating.to_i.between?(1, 5)
+                    cgi
+                    puts "What was your favorite drink?"
+                    favorite = gets.chomp
+                    cgi
+                    Bookmark.create(brewery_id: brewery[0].id, user_id: user.id, rating: rating, favorite: favorite)
+                    puts "Bookmark saved!"
+                    pick_option(user)
+                else
+                    invalid_input
+                    bookmark_chosen(user)
+                end
             else
                 puts "Multiple results found. Please select the corresponding number for the brewery you want to bookmark."
                 cgi
@@ -248,22 +253,27 @@ def bookmark_chosen(user)
                     puts "You've selected #{capital_first(brewery[user_input.to_i - 1].name)} in #{capital_first(brewery[user_input.to_i - 1].city)}! Please tell us a little more to save your bookmark...
                     \n Rate the Brewery (1-5)"
                     rating = gets.chomp
-                    cgi
-                    puts "What was your favorite drink?"
-                    favorite = gets.chomp
-                    cgi
-                    Bookmark.create(brewery_id: brewery[user_input.to_i - 1].id, user_id: user.id, rating: rating, favorite: favorite)
-                    puts "Bookmark saved!"
-                    pick_option(user)
+                    if rating.to_i.between?(1, 5)
+                        cgi
+                        puts "What was your favorite drink?"
+                        favorite = gets.chomp
+                        cgi
+                        Bookmark.create(brewery_id: brewery[user_input.to_i - 1].id, user_id: user.id, rating: rating, favorite: favorite)
+                        puts "Bookmark saved!"
+                        pick_option(user)
+                    else
+                        invalid_input
+                        bookmark_chosen(user)
+                    end
                 else
                     invalid_input
-                    find_chosen(user)
+                    bookmark_chosen(user)
                 end
             end
-            pick_option(user)
+            
         else
             invalid_input
-            find_chosen(user)
+            bookmark_chosen(user)
         end
     elsif bm_identifier == "2"
         cgi
@@ -272,16 +282,21 @@ def bookmark_chosen(user)
         cgi
         brewery = Brewery.find_by(phone_number: phone_number)
         if brewery
-            puts "Brewery found! Please tell us a little more to save your bookmark...
+            puts "Brewery found! #{capital_first(brewery.name)}... Please tell us a little more to save your bookmark...
             \n Rate the Brewery (1-5)"
             rating = gets.chomp
-            cgi
-            puts "What was your favorite drink?"
-            favorite = gets.chomp
-            cgi
-            Bookmark.create(brewery_id: brewery.id, user_id: user.id, rating: rating, favorite: favorite)
-            puts "Bookmark saved!"
-            pick_option(user)
+            if rating.to_i.between?(1, 5)
+                cgi
+                puts "What was your favorite drink?"
+                favorite = gets.chomp
+                cgi
+                Bookmark.create(brewery_id: brewery.id, user_id: user.id, rating: rating, favorite: favorite)
+                puts "Bookmark saved!"
+                pick_option(user)
+            else
+                invalid_input
+                bookmark_chosen(user)
+            end
         else 
             invalid_input
             bookmark_chosen(user)
@@ -296,9 +311,9 @@ def update_chosen(user)
     cgi
     puts "What would you like to update?"
     puts "Please choose the corresponding number:
-    \n 1. name
-    \n 2. phone_number
-    \n 3. current city"
+    \n 1. Name
+    \n 2. Phone Number
+    \n 3. Current City"
     user_input = gets.chomp
     cgi
     if user_input == "1"
@@ -331,12 +346,15 @@ end
 def other_chosen(user)
     cgi
     puts "Would you like to: (select corresponding number)
-    \n 1. See your favorite drink
+    \n 1. View Bookmarks
     \n 2. Find the highest rated brewery
-    \n 3. Find the most popular brewery"
+    \n 3. Find the most popular brewery
+    \n 4. See your favorite drink
+    \n 5. Delete Bookmark
+    \n 6. Have a Beer!"
     user_input = gets.chomp
     cgi
-    if user_input == "1"
+    if user_input == "4"
         user.user_fav_drink
         pick_option(user)
     elsif user_input == "2"
@@ -345,6 +363,56 @@ def other_chosen(user)
     elsif user_input == "3"
         Bookmark.most_bookmarked_brewery
         pick_option(user)
+    elsif user_input == "1"
+        my_bookmarks = Bookmark.where('user_id = ?', user.id)
+        if my_bookmarks.count > 0
+            puts "You have saved #{my_bookmarks.count} bookmark(s)!"
+            my_bookmarks.length.times do |i|
+                puts "#{i + 1}. #{capital_first(my_bookmarks[i].brewery.name)}, city: #{capital_first(my_bookmarks[i].brewery.city)}, rating: #{my_bookmarks[i].rating}, favorite drink: #{my_bookmarks[i].favorite}"
+            end
+            pick_option(user)
+        else
+            puts "You do not have any bookmarks saved!"
+            pick_option(user)
+        end
+    elsif user_input == "6"
+        puts "          .~~~~."
+        puts "          i====i_"
+        puts "          |cccc|_)"
+        puts "          |cccc|"
+        puts "          `-==-'"
+        pick_option(user)
+    elsif user_input == "5"
+        my_bookmarks = Bookmark.where('user_id = ?', user.id)
+        if my_bookmarks.count > 0
+            puts "You have #{my_bookmarks.count} bookmark(s). Select the corresponding number for the bookmark you'd like to delete:"
+            cgi
+            my_bookmarks.length.times do |i|
+                puts "#{i + 1}. #{capital_first(my_bookmarks[i].brewery.name)}, city: #{capital_first(my_bookmarks[i].brewery.city)}, rating: #{my_bookmarks[i].rating}, favorite drink: #{my_bookmarks[i].favorite}"
+            end
+            user_input = gets.chomp
+            if user_input.to_i.to_s == user_input && user_input.to_i.between?(1, my_bookmarks.length)
+                puts "Enter 1 to delete number #{user_input}, #{capital_first(my_bookmarks[user_input.to_i - 1].brewery.name)} in #{capital_first(my_bookmarks[user_input.to_i - 1].brewery.city)}, CA. Enter 2 to cancel."
+                confirm = gets.chomp
+                if confirm == "1"
+                    my_bookmarks[user_input.to_i - 1].destroy
+                    puts "Bookmark deleted!"
+                    pick_option(user)
+                elsif confirm == "2"
+                    puts "Delete cancelled"
+                    pick_option(user)
+                else
+                    invalid_input
+                    other_chosen(user)
+                end
+            else
+                invalid_input
+                other_chosen(user)
+            end            
+        else
+            puts "You do not have any bookmarks saved!"
+            pick_option(user)
+        end
     else
         invalid_input
         other_chosen(user)
